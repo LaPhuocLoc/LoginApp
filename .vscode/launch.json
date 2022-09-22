@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-UserLoginApplication<UserLogin>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.laloc.userlogin.UserLoginApplication",
+            "projectName": "UserLogin",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}

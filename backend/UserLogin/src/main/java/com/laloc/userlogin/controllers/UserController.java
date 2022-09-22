@@ -54,7 +54,7 @@ public class UserController {
             @RequestParam("password") String password) {
         Optional<User> foundUser = userRepository.findByUsernameAndPassword(username, password);
         return foundUser.map(user -> ResponseEntity.ok(
-                new ResponseObject("ok", "login successfully", "userid = " + user.getId())
+                new ResponseObject("ok", "login successfully", user.getId())
         )).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                 new ResponseObject("failed", "Wrong username or password", "")
         ));
