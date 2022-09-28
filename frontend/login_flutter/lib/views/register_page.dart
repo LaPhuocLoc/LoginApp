@@ -19,28 +19,38 @@ class _RegisterPageState extends State<RegisterPage> {
   // validator for sign up
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  void validate() {
-    if (_formKey.currentState!.validate()) {
-      signUp();
-    }
-  }
-
   // controllers
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
   final userController = TextEditingController();
+  final emailController = TextEditingController();
+  final nameController = TextEditingController();
 
   Future<void> signUp() async {
-    // var formData = FormData.fromMap(
-    //     {'username': userController.text, 'password': passwordController.text});
-    // Response response =
-    //     await dio.post('http://10.0.2.2:8080/api/user/login', data: formData);
-    // final UserModel map = UserModel.fromJson(response.data["data"]);
-    // print(response.data["status"]);
-    // return map;
-    dynamic res =
-        await ApiClient.register(userController.text, passwordController.text);
-    print(res["data"]);
+    if (_formKey.currentState!.validate()) {
+      //show snackbar to indicate loading
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: const Text('Processing Data'),
+        backgroundColor: Colors.green.shade300,
+      ));
+      // post user data to be sent and get response from ApiClient
+      dynamic res = await ApiClient.register(userController.text,
+          passwordController.text, nameController.text, emailController.text);
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      //checks if there is no error in the response body.
+      //if error is not present, navigate the users to Login Screen.
+      if (res['status'] == 'ok') {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text("Register Successful!"),
+            backgroundColor: Colors.green.shade300));
+      } else {
+        //if error is present, display a snackbar showing the error messsage
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Error: ${res['message']}'),
+          backgroundColor: Colors.red.shade300,
+        ));
+      }
+    }
   }
 
   @override
@@ -139,11 +149,54 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                     ),
                   ),
+                  SizedBox(height: 10),
+
+                  // Full Name
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      border: Border.all(color: Colors.white),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    margin: EdgeInsets.symmetric(horizontal: 25.0),
+                    child: TextFormField(
+                      controller: nameController,
+                      validator: ValidationBuilder()
+                          .minLength(6, "Name should contain at least 6 letter")
+                          .build(),
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: 'Full Name',
+                        contentPadding: EdgeInsets.all(8),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 10),
+
+                  // Email Address
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      border: Border.all(color: Colors.white),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    margin: EdgeInsets.symmetric(horizontal: 25.0),
+                    child: TextFormField(
+                      controller: emailController,
+                      validator:
+                          ValidationBuilder().email().maxLength(50).build(),
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: 'Email',
+                        contentPadding: EdgeInsets.all(8),
+                      ),
+                    ),
+                  ),
 
                   //Sign Up button
                   SizedBox(height: 10),
                   GestureDetector(
-                    onTap: validate,
+                    onTap: signUp,
                     child: Container(
                       margin: EdgeInsets.symmetric(horizontal: 25.0),
                       padding: EdgeInsets.all(20),

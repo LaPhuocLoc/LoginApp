@@ -30,15 +30,20 @@ class ApiClient {
   }
 
   // register
-  static Future register(String username, String password) async {
+  static Future register(
+      String username, String password, String name, String email) async {
     try {
-      Response response = await Dio().post(
-          'http://10.0.2.2:8080/api/user/register',
-          data: {'username': username, 'password': password});
+      Response response = await Dio()
+          .post('http://10.0.2.2:8080/api/user/register', data: {
+        'username': username,
+        'password': password,
+        'name': name,
+        'email': email
+      });
       print(response.data);
-      return response.data["data"];
-    } catch (e) {
-      print(e.toString());
+      return response.data;
+    } on DioError catch (e) {
+      return e.response!.data;
     }
   }
 }
