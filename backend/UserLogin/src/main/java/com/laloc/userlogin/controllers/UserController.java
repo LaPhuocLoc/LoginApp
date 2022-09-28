@@ -1,5 +1,6 @@
 package com.laloc.userlogin.controllers;
 
+import com.laloc.userlogin.models.LoginForm;
 import com.laloc.userlogin.models.ResponseObject;
 import com.laloc.userlogin.models.User;
 import com.laloc.userlogin.repository.UserRepository;
@@ -50,12 +51,11 @@ public class UserController {
     // login
     @PostMapping("/login")
     ResponseEntity<ResponseObject> userLogin(
-            @RequestParam("username") String username,
-            @RequestParam("password") String password) {
-        Optional<User> foundUser = userRepository.findByUsernameAndPassword(username, password);
+            @RequestBody LoginForm loginForm) {
+        Optional<User> foundUser = userRepository.findByUsernameAndPassword(loginForm.getUsername(), loginForm.getPassword());
         return foundUser.map(user -> ResponseEntity.ok(
                 new ResponseObject("ok", "login successfully", user.getId())
-        )).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+        )).orElseGet(() -> ResponseEntity.ok(
                 new ResponseObject("failed", "Wrong username or password", "")
         ));
     }
