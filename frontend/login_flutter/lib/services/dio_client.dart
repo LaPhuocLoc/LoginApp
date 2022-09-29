@@ -2,9 +2,11 @@ import 'package:dio/dio.dart';
 import 'package:login_flutter/models/user_model.dart';
 
 class ApiClient {
+  static String baseURL = 'http://10.0.2.2:8080';
   // login
+
   static Future login(String username, String password) async {
-    Response response = await Dio().post('http://10.0.2.2:8080/api/user/login',
+    Response response = await Dio().post('$baseURL/api/user/login',
         data: {'username': username, 'password': password});
     if (response.statusCode == 200) {
       print(response.data);
@@ -19,8 +21,7 @@ class ApiClient {
   static Future<UserModel> getUser(int id) async {
     try {
       final userid = id.toString();
-      Response response =
-          await Dio().get('http://10.0.2.2:8080/api/user/$userid');
+      Response response = await Dio().get('$baseURL/api/user/$userid');
       final UserModel userData = UserModel.fromJson(response.data["data"]);
       print(userData);
       return userData;
@@ -33,8 +34,7 @@ class ApiClient {
   static Future register(
       String username, String password, String name, String email) async {
     try {
-      Response response = await Dio()
-          .post('http://10.0.2.2:8080/api/user/register', data: {
+      Response response = await Dio().post('$baseURL/api/user/register', data: {
         'username': username,
         'password': password,
         'name': name,
